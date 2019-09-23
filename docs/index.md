@@ -1391,13 +1391,13 @@ The "nyan" reporter is exactly what you might expect:
 
 ### TAP
 
-The TAP reporter emits lines for a [Test-Anything-Protocol][] consumer.
+The "TAP" reporter emits lines for a [Test-Anything-Protocol][] consumer.
 
 ![test anything protocol](images/reporter-tap.png?withoutEnlargement&resize=920,9999){:class="screenshot" lazyload="on"}
 
 ### Landing Strip
 
-The Landing Strip (`landing`) reporter is a gimmicky test reporter simulating a plane landing :) unicode ftw
+The Landing Strip ("landing") reporter is a gimmicky test reporter simulating a plane landing :) unicode ftw
 
 ![landing strip plane reporter](images/reporter-landing.png?withoutEnlargement&resize=920,9999){:class="screenshot" lazyload="on"}
 ![landing strip with failure](images/reporter-landing-fail.png?withoutEnlargement&resize=920,9999){:class="screenshot" lazyload="on"}
@@ -1488,7 +1488,7 @@ example, here is the Connect [test output][connect-test-output].
 
 ### XUnit
 
-The `xunit` reporter is also available. It outputs an XUnit-compatible XML document, often applicable in CI servers.
+The "xunit" reporter is also available. It outputs an XUnit-compatible XML document, often applicable in CI servers.
 
 By default, it will output to the console. To write directly to a file, use `--reporter-options output=filename.xml`.
 
@@ -1574,6 +1574,38 @@ mocha.setup({
 });
 ```
 
+Available options:
+
+```text
+allowUncaught  {boolean}            -  Propagate uncaught errors?
+asyncOnly      {boolean}            -  Force `done` callback or promise?
+bail           {boolean}            -  Bail after first test failure?
+checkLeaks     {boolean}            -  If true, check leaks.
+delay          {boolean}            -  Delay root suite execution?
+enableTimeouts {boolean}            -  Enable timeouts?
+fgrep          {string}             -  Test filter given string.
+forbidOnly     {boolean}            -  Tests marked `only` fail the suite?
+forbidPending  {boolean}            -  Pending tests fail the suite?
+fullStackTrace {boolean}            -  Full stacktrace upon failure?
+global         {string[]}           -  Variables expected in global scope.
+grep           {RegExp|string}      -  Test filter given regular expression.
+growl          {boolean}            -  Enable desktop notifications?
+hideDiff       {boolean}            -  Suppress diffs from failures?
+ignoreLeaks    {boolean}            -  Ignore global leaks?
+invert         {boolean}            -  Invert test filter matches?
+noHighlighting {boolean}            -  Disable syntax highlighting?
+reporter       {string|constructor} -  Reporter** name or constructor.
+reporterOption {Object}             -  Reporter settings object.
+retries        {number}             -  Number of times to retry failed tests.
+slow           {number}             -  Slow threshold value.
+timeout        {number|string}      -  Timeout threshold value.
+ui             {string}             -  Interface name.
+color          {boolean}            -  Color TTY output from reporter?
+useInlineDiffs {boolean}            -  Use inline diffs?
+```
+
+\*\* Available built in reporters that can be referenced by name [here](#reporters), and recommended reporters for the browser [here](#reporting).
+
 ### Browser-specific Option(s)
 
 The following option(s) _only_ function in a browser context:
@@ -1582,7 +1614,7 @@ The following option(s) _only_ function in a browser context:
 
 ### Reporting
 
-The "HTML" reporter is what you see when running Mocha in the browser. It looks like this:
+The "HTML" reporter is the default reporter when running Mocha in the browser. It looks like this:
 
 ![HTML test reporter](images/reporter-html.png?withoutEnlargement&resize=920,9999){:class="screenshot" lazyload="on"}
 
