@@ -1,6 +1,6 @@
 {
   "name": "mocha",
-  "version": "6.1.4",
+  "version": "6.2.0",
   "description": "simple, flexible, fun test framework",
   "keywords": [
     "mocha",
@@ -78,6 +78,7 @@
     "Bjorn Stromberg <bjorn@bjornstar.com>",
     "Brendan Nee <brendan.nee@gmail.com>",
     "Brian Beck <exogen@gmail.com>",
+    "Brian Lagerman <49239617+brian-lagerman@users.noreply.github.com>",
     "Brian Lalor <blalor@bravo5.org>",
     "Brian M. Carlson <brian.m.carlson@gmail.com>",
     "Brian Moore <guardbionic-github@yahoo.com>",
@@ -111,6 +112,7 @@
     "Cory Thomas <cory.thomas@bazaarvoice.com>",
     "Craig Taub <craigtaub@gmail.com>",
     "Cube <maty21@gmail.com>",
+    "Daniel Ruf <827205+DanielRuf@users.noreply.github.com>",
     "Daniel Ruf <daniel@daniel-ruf.de>",
     "Daniel St. Jules <danielst.jules@gmail.com>",
     "Daniel Stockman <daniel.stockman@gmail.com>",
@@ -163,6 +165,7 @@
     "Fredrik Enestad <fredrik@devloop.se>",
     "Fredrik Lindin <fredriklindin@gmail.com>",
     "Fumiaki MATSUSHIMA <mtsmfm@gmail.com>",
+    "Gabe Gorelick <gabegorelick@gmail.com>",
     "Gabriel Silk <gabesilk@gmail.com>",
     "Gareth Aye <gaye@mozilla.com>",
     "Gareth Murphy <gareth.cpm@gmail.com>",
@@ -343,6 +346,7 @@
     "P. Roebuck <plroebuck@users.noreply.github.com>",
     "Panu Horsmalahti <panu.horsmalahti@iki.fi>",
     "Parker Moore <parkrmoore@gmail.com>",
+    "Pascal <pascal@pascal.com>",
     "Pat Finnigan <patrick.k.finnigan@gmail.com>",
     "Paul Armstrong <paul@paularmstrongdesigns.com>",
     "Paul Miller <paul@paulmillr.com>",
@@ -353,6 +357,7 @@
     "Peter Rust <peter@cornerstonenw.com>",
     "Phil Sung <psung@dnanexus.com>",
     "Philip M. White <philip@mailworks.org>",
+    "Piotr Kuczynski <piotr.kuczynski@gmail.com>",
     "PoppinL <poppinlp@gmail.com>",
     "Poprádi Árpád <popradi.arpad11@gmail.com>",
     "Prayag Verma <prayag.verma@gmail.com>",
@@ -414,6 +419,7 @@
     "Sorin Iclanzan <sorin@iclanzan.com>",
     "Standa Opichal <opichals@gmail.com>",
     "startswithaj <jake.mc@icloud.com>",
+    "Stephen Hess <trescube@users.noreply.github.com>",
     "Stephen Mathieson <smath23@gmail.com>",
     "Steve Mason <stevem@brandwatch.com>",
     "Stewart Taylor <stewart.taylor1@gmail.com>",
@@ -431,6 +437,7 @@
     "Thedark1337 <thedark1337@thedark1337.com>",
     "Thomas Broadley <buriedunderbooks@hotmail.com>",
     "Thomas Grainger <tagrain@gmail.com>",
+    "Thomas Scholtes <thomas-scholtes@gmx.de>",
     "Thomas Vantuycom <thomasvantuycom@protonmail.com>",
     "Tim Ehat <timehat@gmail.com>",
     "Tim Harshman <goteamtim+git@gmail.com>",
@@ -444,6 +451,7 @@
     "Tom Coquereau <tom@thau.me>",
     "Tom Hughes <tom@compton.nu>",
     "Tomer Eskenazi <tomer.eskenazi@ironsrc.com>",
+    "toyjhlee <toyjhlee@gmail.com>",
     "traleig1 <darkphoenix739@gmail.com>",
     "Travis Jeffery <tj@travisjeffery.com>",
     "tripu <t@tripu.info>",
@@ -495,7 +503,7 @@
     "test": "./test"
   },
   "engines": {
-    "node": ">= 6.0.0"
+    "node": ">= 8.0.0"
   },
   "scripts": {
     "prepublishOnly": "nps test clean build",
@@ -506,6 +514,7 @@
   "dependencies": {
     "ansi-colors": "3.2.3",
     "browser-stdout": "1.3.1",
+    "chokidar": "3.0.2",
     "debug": "3.2.6",
     "diff": "3.5.0",
     "escape-string-regexp": "1.0.5",
@@ -524,14 +533,15 @@
     "supports-color": "6.0.0",
     "which": "1.3.1",
     "wide-align": "1.1.3",
-    "yargs": "13.2.2",
-    "yargs-parser": "13.0.0",
-    "yargs-unparser": "1.5.0"
+    "yargs": "13.3.0",
+    "yargs-parser": "13.1.1",
+    "yargs-unparser": "1.6.0"
   },
   "devDependencies": {
     "@11ty/eleventy": "^0.8.3",
-    "@mocha/contributors": "^1.0.3",
-    "@mocha/docdash": "^2.1.0",
+    "@mocha/contributors": "^1.0.4",
+    "@mocha/docdash": "^2.1.2",
+    "acorn": "^7.0.0",
     "assetgraph-builder": "^6.10.1",
     "autoprefixer": "^9.6.0",
     "browserify": "^16.2.3",
@@ -552,7 +562,8 @@
     "eslint-plugin-standard": "^4.0.0",
     "fs-extra": "^8.0.1",
     "husky": "^1.3.1",
-    "jsdoc": "^3.6.2",
+    "hyperlink": "^4.3.1",
+    "jsdoc": "^3.6.3",
     "karma": "^4.1.0",
     "karma-browserify": "^6.0.0",
     "karma-chrome-launcher": "^2.2.0",
@@ -588,7 +599,7 @@
     "watchify": "^3.11.1"
   },
   "files": [
-    "bin/{*mocha,options.js}",
+    "bin/*mocha",
     "assets/growl/*.png",
     "lib/**/*.{js,html,json}",
     "index.js",
@@ -608,7 +619,8 @@
     "fs": false,
     "glob": false,
     "path": false,
-    "supports-color": false
+    "supports-color": false,
+    "chokidar": false
   },
   "prettier": {
     "singleQuote": true,

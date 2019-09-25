@@ -39,7 +39,7 @@ Mocha is a feature-rich JavaScript test framework running on [Node.js][] and in 
 - [config file support](#-config-path)
 - [mocha.opts file support](#-opts-path)
 - clickable suite titles to filter test execution
-- [node debugger support](#-debug-inspect-debug-brk-inspect-brk-debug-inspect)
+- [node debugger support](#-inspect-inspect-brk-inspect)
 - [detects multiple calls to `done()`](#detects-multiple-calls-to-done)
 - [use any assertion library you want](#assertions)
 - [extensible reporting, bundled with 9+ reporters](#reporters)
@@ -98,7 +98,7 @@ or as a development dependency for your project:
 $ npm install --save-dev mocha
 ```
 
-> As of v6.0.0, Mocha requires Node.js v6.0.0 or newer.
+> As of v7.0.0, Mocha requires Node.js v8.0.0 or newer.
 
 ## Getting Started
 
@@ -566,17 +566,7 @@ _Note_: Hooks, if present, will still be executed.
 
 ## Inclusive Tests
 
-This feature is the inverse of `.only()`. By appending `.skip()`, you may tell Mocha to simply ignore these suite(s) and test case(s). Anything skipped will be marked as [pending](#pending-tests), and reported as such. Here's an example of skipping an entire suite:
-
-```js
-describe('Array', function() {
-  describe.skip('#indexOf()', function() {
-    // ...
-  });
-});
-```
-
-Or a specific test-case:
+This feature is the inverse of `.only()`. By appending `.skip()`, you may tell Mocha to simply ignore test case(s). Anything skipped will be marked as [pending](#pending-tests), and reported as such. Here's an example of skipping an individual test:
 
 ```js
 describe('Array', function() {
@@ -591,6 +581,20 @@ describe('Array', function() {
   });
 });
 ```
+
+You can also put `.skip()` on an entire suite. This is equivalent to appending `.skip()` onto all tests in the suite. Hooks in the suite are also skipped.
+
+```js
+describe('Array', function() {
+  describe.skip('#indexOf()', function() {
+    it('should return -1 unless present', function() {
+      // this test will not be run
+    });
+  });
+});
+```
+
+_Note_: Code in skipped suites, that is placed outside of hooks or tests is still executed, as mocha will still invoke the suite function to build up the suite structure for visualization.
 
 > _Best practice_: Use `.skip()` instead of commenting tests out.
 
@@ -824,8 +828,8 @@ mocha [spec..]
 Run tests with Mocha
 
 Commands
-  mocha debug [spec..]  Run tests with Mocha                           [default]
-  mocha init <path>     create a client-side Mocha setup at <path>
+  mocha inspect [spec..]  Run tests with Mocha                         [default]
+  mocha init <path>       create a client-side Mocha setup at <path>
 
 Rules & Behavior
   --allow-uncaught           Allow uncaught errors to propagate        [boolean]
@@ -840,9 +844,9 @@ Rules & Behavior
   --global, --globals        List of allowed global variables            [array]
   --retries                  Retry failed tests this many times         [number]
   --slow, -s                 Specify "slow" test threshold (in milliseconds)
-                                                          [number] [default: 75]
+                                                          [string] [default: 75]
   --timeout, -t, --timeouts  Specify test timeout threshold (in milliseconds)
-                                                        [number] [default: 2000]
+                                                        [string] [default: 2000]
   --ui, -u                   Specify user interface    [string] [default: "bdd"]
 
 Reporting & Output
@@ -859,17 +863,18 @@ Reporting & Output
   -O                                        (<k=v,[k1=v1,..]>)           [array]
 
 Configuration
-  --config   Path to config file                    [default: (nearest rc file)]
-  --opts     Path to `mocha.opts`        [string] [default: "./test/mocha.opts"]
+  --config   Path to config file           [string] [default: (nearest rc file)]
+  --opts     Path to `mocha.opts` (DEPRECATED)
+                                         [string] [default: "./test/mocha.opts"]
   --package  Path to package.json for config                            [string]
 
 File Handling
-  --ignore, --exclude              Ignore file(s) or glob pattern(s)
-                                                       [array] [default: (none)]
   --extension, --watch-extensions  File extension(s) to load and/or watch
                                                            [array] [default: js]
   --file                           Specify file(s) to be loaded prior to root
                                    suite execution     [array] [default: (none)]
+  --ignore, --exclude              Ignore file(s) or glob pattern(s)
+                                                       [array] [default: (none)]
   --recursive                      Look for tests in subdirectories    [boolean]
   --require, -r                    Require module      [array] [default: (none)]
   --sort, -S                       Sort test files                     [boolean]
@@ -886,10 +891,10 @@ Positional Arguments
                                                      [array] [default: ["test"]]
 
 Other Options
-  --help, -h     Show usage information & exit                         [boolean]
-  --version, -V  Show version number & exit                            [boolean]
-  --interfaces   List built-in user interfaces & exit                  [boolean]
-  --reporters    List built-in reporters & exit                        [boolean]
+  --help, -h         Show usage information & exit                     [boolean]
+  --version, -V      Show version number & exit                        [boolean]
+  --list-interfaces  List built-in user interfaces & exit              [boolean]
+  --list-reporters   List built-in reporters & exit                    [boolean]
 
 Mocha Resources
     Chat: https://gitter.im/mochajs/mocha
@@ -983,7 +988,7 @@ Note: A test that executes for _half_ of the "slow" time will be highlighted _in
 
 ### `--timeout <ms>, -t <ms>`
 
-> _Update in v6.0.0: `--no-timeout` is implied when invoking Mocha using debug flags. It is equivalent to `--timeout 0`. `--timeout 99999999` is no longer needed._
+> _Update in v6.0.0: `--no-timeout` is implied when invoking Mocha using inspect flags. It is equivalent to `--timeout 0`. `--timeout 99999999` is no longer needed._
 
 Specifies the test case timeout, defaulting to two (2) seconds (2000 milliseconds). Tests taking longer than this amount of time will be marked as failed.
 
@@ -1061,7 +1066,7 @@ By default, Mocha will search for a config file if `--config` is not specified; 
 
 ### `--opts <path>`
 
-> _Updated in v6.0.0; added `--no-opts`._
+> _Deprecated._
 
 Specify a path to [`mocha.opts`](#mochaopts).
 
@@ -1075,33 +1080,31 @@ Specify an explicit path to a [`package.json` file](#configuring-mocha-nodejs) (
 
 By default, Mocha looks for a `package.json` in the current working directory or nearest ancestor, and will use the first file found (regardless of whether it contains a `mocha` property); to suppress `package.json` lookup, use `--no-package`.
 
-### `--ignore <file|directory|glob>`
-
-Explicitly ignore (exclude) one or more test files, directories or globs (e.g., `some/**/files*`) that would otherwise be loaded.
-
-Files specified using `--file` _are not affected_ by this option.
-
-Can be specified multiple times.
-
-### `--extension <ext>, --watch-extensions <ext>`
-
-> _Updated in v6.0.0. Previously `--watch-extensions`, but now expanded to affect general test file loading behavior. `--watch-extensions` is now an alias_
+### `--extension <ext>`
 
 Files having this extension will be considered test files. Defaults to `js`.
 
-Affects `--watch` behavior.
-
 Specifying `--extension` will _remove_ `.js` as a test file extension; use `--extension js` to re-add it. For example, to load `.mjs` and `.js` test files, you must supply `--extension mjs --extension js`.
+
+The option can be given multiple times. The option accepts a comma-delimited list: `--extension a,b` is equivalent to `--extension a --extension b`
 
 ### `--file <file|directory|glob>`
 
-Explicitly _include_ a test file to be loaded before other test files files. Multiple uses of `--file` are allowed, and will be loaded in order given.
+Explicitly _include_ a test file to be loaded before other test files. Multiple uses of `--file` are allowed, and will be loaded in order given.
 
 Useful if you want to declare, for example, hooks to be run before every test across all other test files.
 
 Files specified this way are not affected by `--sort` or `--recursive`.
 
 Files specified in this way should contain one or more suites, tests or hooks. If this is not the case, consider `--require` instead.
+
+### `--ignore <file|directory|glob>, --exclude <file|directory|glob>,`
+
+Explicitly ignore (exclude) one or more test files, directories or globs (e.g., `some/**/files*`) that would otherwise be loaded.
+
+Files specified using `--file` _are not affected_ by this option.
+
+Can be specified multiple times.
 
 ### `--recursive`
 
@@ -1128,9 +1131,31 @@ Sort test files (by absolute path) using [Array.prototype.sort][mdn-array-sort].
 
 ### `--watch, -w`
 
-Executes tests on changes to JavaScript in the current working directory (and once initially).
+Rerun tests on file changes.
 
-By default, only files with extension `.js` are watched. Use `--extension` to change this behavior.
+The `--watch-files` and `--watch-ignore` options can be used to control which files are watched for changes.
+
+### `--watch-files <file|directory|glob>`
+
+> _New in v7.0.0_
+
+List of paths or globs to watch when `--watch` is set. If a file matching the given glob changes or is added or removed mocha will rerun all tests.
+
+If the path is a directory all files and subdirectories will be watched.
+
+By default all files in the current directory having one of the extensions provided by `--extension` and not contained in the `node_modules` or `.git` folders are watched.
+
+The option can be given multiple times. The option accepts a comma-delimited list: `--watch-files a,b` is equivalent to `--watch-files a --watch-files b`
+
+### `--watch-ignore <file|directory|glob>`
+
+> _New in v7.0.0_
+
+List of paths or globs to exclude from watching. Defaults to `node_modules` and `.git`.
+
+To exclude all files in a directory it is preferable to use `foo/bar` instead of `foo/bar/**/*`. The latter will still watch the directory `foo/bar` but will ignore all changes to the content of that directory.
+
+The option can be given multiple times. The option accepts a comma-delimited list: `--watch-ignore a,b` is equivalent to `--watch-ignore a --watch-ignore b`
 
 ### `--fgrep <string>, -f <string>`
 
@@ -1174,15 +1199,15 @@ Use the _inverse_ of the match specified by `--grep` or `fgrep`.
 
 Requires either `--grep` or `--fgrep` (but not both).
 
-### `--debug, --inspect, --debug-brk, --inspect-brk, debug, inspect`
+### `--inspect, --inspect-brk, inspect`
 
-> _BREAKING CHANGE in v6.0.0; `-d` is no longer an alias for `--debug`._ > _Other updates in v6.0.0:_ > _In versions of Node.js implementing `--inspect` and `--inspect-brk`, `--debug` and `--debug-brk` are respectively aliases for these two options._ > _Likewise, `debug` (not `--debug`) is an alias for `inspect` (not `--inspect`) in Node.js versions where `debug` is deprecated._
+> _BREAKING CHANGE in v7.0.0; `--debug` / `--debug-brk` are removed and `debug` is deprecated._
 
-Enables Node.js' debugger or inspector.
+Enables Node.js' inspector.
 
-Use `--inspect` / `--inspect-brk` / `--debug` / `--debug-brk` to launch the V8 inspector for use with Chrome Dev Tools.
+Use `--inspect` / `--inspect-brk` to launch the V8 inspector for use with Chrome Dev Tools.
 
-Use `inspect` / `debug` to launch Node.js' internal debugger.
+Use `inspect` to launch Node.js' internal debugger.
 
 All of these options are mutually exclusive.
 
@@ -1366,13 +1391,13 @@ The "nyan" reporter is exactly what you might expect:
 
 ### TAP
 
-The TAP reporter emits lines for a [Test-Anything-Protocol][] consumer.
+The "TAP" reporter emits lines for a [Test-Anything-Protocol][] consumer.
 
 ![test anything protocol](images/reporter-tap.png?withoutEnlargement&resize=920,9999){:class="screenshot" lazyload="on"}
 
 ### Landing Strip
 
-The Landing Strip (`landing`) reporter is a gimmicky test reporter simulating a plane landing :) unicode ftw
+The Landing Strip ("landing") reporter is a gimmicky test reporter simulating a plane landing :) unicode ftw
 
 ![landing strip plane reporter](images/reporter-landing.png?withoutEnlargement&resize=920,9999){:class="screenshot" lazyload="on"}
 ![landing strip with failure](images/reporter-landing-fail.png?withoutEnlargement&resize=920,9999){:class="screenshot" lazyload="on"}
@@ -1463,7 +1488,7 @@ example, here is the Connect [test output][connect-test-output].
 
 ### XUnit
 
-The `xunit` reporter is also available. It outputs an XUnit-compatible XML document, often applicable in CI servers.
+The "xunit" reporter is also available. It outputs an XUnit-compatible XML document, often applicable in CI servers.
 
 By default, it will output to the console. To write directly to a file, use `--reporter-options output=filename.xml`.
 
@@ -1544,10 +1569,42 @@ mocha.setup({
 // Use "tdd" interface, ignore leaks, and force all tests to be asynchronous
 mocha.setup({
   ui: 'tdd',
-  ignoreLeaks: true,
+  checkLeaks: false, // default
   asyncOnly: true
 });
 ```
+
+Available options:
+
+```text
+allowUncaught  {boolean}            -  Propagate uncaught errors?
+asyncOnly      {boolean}            -  Force `done` callback or promise?
+bail           {boolean}            -  Bail after first test failure?
+checkLeaks     {boolean}            -  If true, check leaks.
+delay          {boolean}            -  Delay root suite execution?
+enableTimeouts {boolean}            -  Enable timeouts?
+fgrep          {string}             -  Test filter given string.
+forbidOnly     {boolean}            -  Tests marked `only` fail the suite?
+forbidPending  {boolean}            -  Pending tests fail the suite?
+fullStackTrace {boolean}            -  Full stacktrace upon failure?
+global         {string[]}           -  Variables expected in global scope.
+grep           {RegExp|string}      -  Test filter given regular expression.
+growl          {boolean}            -  Enable desktop notifications?
+hideDiff       {boolean}            -  Suppress diffs from failures?
+ignoreLeaks    {boolean}            -  Ignore global leaks?
+invert         {boolean}            -  Invert test filter matches?
+noHighlighting {boolean}            -  Disable syntax highlighting?
+reporter       {string|constructor} -  Reporter** name or constructor.
+reporterOption {Object}             -  Reporter settings object.
+retries        {number}             -  Number of times to retry failed tests.
+slow           {number}             -  Slow threshold value.
+timeout        {number|string}      -  Timeout threshold value.
+ui             {string}             -  Interface name.
+color          {boolean}            -  Color TTY output from reporter?
+useInlineDiffs {boolean}            -  Use inline diffs?
+```
+
+\*\* Available built in reporters that can be referenced by name [here](#reporters), and recommended reporters for the browser [here](#reporting).
 
 ### Browser-specific Option(s)
 
@@ -1557,7 +1614,7 @@ The following option(s) _only_ function in a browser context:
 
 ### Reporting
 
-The "HTML" reporter is what you see when running Mocha in the browser. It looks like this:
+The "HTML" reporter is the default reporter when running Mocha in the browser. It looks like this:
 
 ![HTML test reporter](images/reporter-html.png?withoutEnlargement&resize=920,9999){:class="screenshot" lazyload="on"}
 
@@ -1632,14 +1689,14 @@ tests as shown below:
 
 > _New in v6.0.0_
 
-In addition to supporting the legacy [`mocha.opts`](#mochaopts) run-control format, Mocha now supports configuration files, typical of modern command-line tools, in several formats:
+In addition to supporting the deprecated [`mocha.opts`](#mochaopts) run-control format, Mocha now supports configuration files, typical of modern command-line tools, in several formats:
 
 - **JavaScript**: Create a `.mocharc.js` in your project's root directory, and export an object (`module.exports = {/* ... */}`) containing your configuration.
 - **YAML**: Create a `.mocharc.yaml` (or `.mocharc.yml`) in your project's root directory.
 - **JSON**: Create a `.mocharc.json` (or `.mocharc.jsonc`) in your project's root directory. Comments &mdash; while not valid JSON &mdash; are allowed in this file, and will be ignored by Mocha.
-- **`package.json`**: Create a `mocha` property in your project's `package.json`.
+- **package.json**: Create a `mocha` property in your project's `package.json`.
 
-Mocha suggests using one of the above strategies for configuration instead of the legacy `mocha.opts` format.
+Mocha suggests using one of the above strategies for configuration instead of the deprecated `mocha.opts` format.
 
 ### Custom Locations
 
@@ -1689,7 +1746,7 @@ Configurations can inherit from other modules using the `extends` keyword. See [
 
 ## `mocha.opts`
 
-> _Updated in v6.0.0; `mocha.opts` is now considered "legacy" &mdash; though not yet deprecated &mdash; and we recommend using a configuration file instead._
+> _`mocha.opts` file support is DEPRECATED and will be removed from a future version of Mocha. We recommend using a configuration file instead._
 
 Mocha will attempt to load `"./test/mocha.opts"` as a run-control file of sorts.
 
@@ -1907,7 +1964,7 @@ or the [source](https://github.com/mochajs/mocha/blob/master/lib/mocha.js).
 [yargs-configobject-extends]: http://yargs.js.org/docs/#api-configobject-extends-keyword
 [zsh-globbing]: http://zsh.sourceforge.net/Doc/Release/Expansion.html#Recursive-Globbing
 
-<!-- AUTO-GENERATED-CONTENT:START (manifest:template=[Gitter]: ${gitter}) -->
+<!-- AUTO-GENERATED-CONTENT:START (manifest:template=[gitter]: ${gitter}) -->
 
 [gitter]: https://gitter.im/mochajs/mocha
 
