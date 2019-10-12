@@ -1574,6 +1574,21 @@ mocha.setup({
 });
 ```
 
+Browser Mocha supports many, but not all [cli options](#command-line-usage).  
+To use a [cli option](#command-line-usage) that contains a "-", please convert the option to camel-case, (eg. `check-leaks` to `checkLeaks`).
+
+```text
+
+colors         {boolean}            -  Use color TTY output from reporter?
+diff           {boolean}            -  Show diff on failure?
+inlineDiffs    {boolean}            -  Display actual/expected differences
+                                       inline within each string
+reporter       {string|constructor} -  Reporter** name or constructor.
+ui             {string}             -  Interface name.
+```
+
+\*\* Available built in reporters that can be referenced by name [here](#reporters), and recommended reporters for the browser [here](#reporting).
+
 ### Browser-specific Option(s)
 
 The following option(s) _only_ function in a browser context:
@@ -1582,7 +1597,7 @@ The following option(s) _only_ function in a browser context:
 
 ### Reporting
 
-The "HTML" reporter is what you see when running Mocha in the browser. It looks like this:
+The "HTML" reporter is the default reporter when running Mocha in the browser. It looks like this:
 
 ![HTML test reporter](images/reporter-html.png?withoutEnlargement&resize=920,9999){:class="screenshot" lazyload="on"}
 
